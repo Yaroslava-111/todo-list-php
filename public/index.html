@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Личный список задач с серверным хранением в MySQL или SQLite.">
+  <meta name="theme-color" content="#fdfdfd">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>Список задач</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="page">
+    <div class="outline">
+      <main class="panel">
+        <div class="kicker"><span class="mark" aria-hidden="true">✓</span> ПРОСТО. ПО ПОРЯДКУ.</div>
+        <h1>Список задач<span>.</span></h1>
+        <p class="subtitle">Всё важное — в одном месте.</p>
+        <noscript><p class="notice">Для работы списка задач включите JavaScript в браузере.</p></noscript>
+        <section id="server-notice" class="notice" hidden><p id="server-message" role="alert"></p></section>
+        <section id="login-panel" aria-label="Вход владельца">
+          <p id="login-loading" class="subtitle">Подключаемся к серверу…</p>
+          <form id="login-form" novalidate>
+            <label class="login-label" for="password">Пароль владельца</label>
+            <div class="form-row"><div class="input-wrap"><input id="password" type="password" autocomplete="current-password" placeholder="Введите пароль" aria-describedby="login-error" required></div><button id="login-button" class="add" type="submit">Войти</button></div>
+            <p id="login-error" class="error" role="alert"></p>
+          </form>
+        </section>
+        <div id="workspace" hidden>
+        <div id="import-panel" class="notice" hidden><p>В этом браузере есть задачи из прежней версии. Перенос выполняется один раз; исходный список остаётся в браузере.</p><button id="import-button" type="button">Перенести задачи</button></div>
+        <form id="task-form" novalidate>
+          <label class="sr-only" for="task-input">Название новой задачи</label>
+          <div class="form-row">
+            <div class="input-wrap"><span aria-hidden="true">+</span><input id="task-input" type="text" placeholder="Что нужно сделать?" autocomplete="off" aria-describedby="input-hint input-error" required></div>
+            <button class="add" type="submit">Добавить</button>
+          </div>
+          <div class="input-meta"><span id="input-hint">От 1 до 200 символов</span><span id="char-count" aria-label="Количество символов">0 / 200</span></div>
+          <p id="input-error" class="error" role="alert" hidden></p>
+        </form>
+        <div class="list-heading"><span>МОИ ЗАДАЧИ</span><span id="task-count">0 из 0 выполнено</span></div>
+        <ul id="task-list" aria-label="Задачи"></ul>
+        <div id="empty-state" class="empty"><span aria-hidden="true">✓</span><p>Пока здесь чистый лист</p><span>Добавьте первую задачу — начните с малого.</span></div>
+        </div>
+        <footer><p id="save-status" role="status">Подключение…</p><div class="footer-actions"><button id="refresh" type="button" hidden>Обновить список</button><button id="logout" type="button" hidden>Выйти</button></div></footer>
+        <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

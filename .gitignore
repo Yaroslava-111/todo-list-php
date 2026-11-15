@@ -1,0 +1,13 @@
+# Секреты и локальные данные — не публиковать
+private/config.php
+private/tasks.sqlite
+private/sessions/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Служебное
+.DS_Store
+Thumbs.db
+*.log
