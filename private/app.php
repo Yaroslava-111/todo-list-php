@@ -123,3 +123,16 @@ function load_config(): array {
     if (($config['require_https'] ?? true) && $url['scheme'] !== 'https') throw new RuntimeException('HTTPS origin required');
     return $config;
 }
+
+function save_config_password_hash(string $hash): void {
+    $file = __DIR__.'/config.php';
+    if (!is_file($file) || !is_writable($file)) throw new RuntimeException('Файл config.php недоступен для записи. Проверьте права доступа.');
+    $config = load_config();
+    $config['password_hash'] = $hash;
+    $tmp = $file.'.tmp';
+    if (file_put_contents($tmp, "<?php\ndeclare(strict_types=1);\nreturn ".var_export($config,true).";\n") === false) throw new RuntimeException('Не удалось записать временный файл конфигурации.');
+    $check = @include $tmp;
+    if (!is_array($check) || !is_string($check['password_hash'] ?? null) || empty(password_get_info($check['password_hash'])['algo'])) { @unlink($tmp); throw new RuntimeException('Проверка нового конфигурационного файла не прошла. Конфигурация не изменена.'); }
+    if (!@rename($tmp,$file)) { @unlink($file); if (!@rename($tmp,$file)) { @unlink($tmp); throw new RuntimeException('Не удалось заменить config.php.'); } }
+    @chmod($file,0600);
+}

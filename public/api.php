@@ -24,7 +24,7 @@ try {
     $action = $_GET['action'] ?? '';
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     if (!is_string($action)) throw new ApiError(400,'Неверное действие.');
-    $known = ['bootstrap','login','logout','tasks','import'];
+    $known = ['bootstrap','login','logout','tasks','import','password'];
     if (!in_array($action,$known,true)) throw new ApiError(404,'Действие не найдено.');
     if (!in_array($method,['GET','POST'],true) || ($action !== 'tasks' && $method !== ($action === 'bootstrap' ? 'GET' : 'POST'))) throw new ApiError(405,'Метод запроса не поддерживается.');
     if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] !== $config['app_url']) throw new ApiError(403,'Запрос с другого сайта запрещён.');
@@ -53,6 +53,17 @@ try {
     if ($action === 'logout') {
         object_fields($body,[]); $_SESSION = []; session_regenerate_id(true); $_SESSION['csrf'] = bin2hex(random_bytes(32));
         respond(['authenticated'=>false,'csrf'=>$_SESSION['csrf']]);
+    }
+    if ($action === 'password') {
+        object_fields($body,['current','next']);
+        // Same bucket as login: prevents brute-forcing the current password via this endpoint.
+        if (!$store->loginAllowed($_SERVER['REMOTE_ADDR'] ?? 'unknown',$now)) {header('Retry-After: 900');throw new ApiError(429,'Слишком много попыток. Повторите через 15 минут.');}
+        $current = validate_password($body->current);
+        $next = validate_password($body->next);
+        if (!password_verify(password_digest($current),$config['password_hash'])) throw new ApiError(401,'Неверный текущий пароль.','password');
+        save_config_password_hash(password_hash(password_digest($next),PASSWORD_DEFAULT));
+        $_SESSION['last_seen'] = $now;
+        respond(['authenticated'=>true] + $store->state() + ['passwordChanged'=>true]);
     }
     if ($action === 'tasks' && $method === 'GET') respond($store->state());
     object_fields($body,['revision','tasks']);

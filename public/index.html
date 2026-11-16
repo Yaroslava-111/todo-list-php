@@ -39,11 +39,26 @@
           <div class="input-meta"><span id="input-hint">От 1 до 200 символов</span><span id="char-count" aria-label="Количество символов">0 / 200</span></div>
           <p id="input-error" class="error" role="alert" hidden></p>
         </form>
-        <div class="list-heading"><span>МОИ ЗАДАЧИ</span><span id="task-count">0 из 0 выполнено</span></div>
+        <div class="list-heading"><span>МОИ ЗАДАЧИ</span><div class="filters" role="group" aria-label="Фильтр задач"><button id="filter-all" type="button" aria-pressed="true">Все</button><button id="filter-active" type="button" aria-pressed="false">Активные</button></div><span id="task-count">0 из 0 выполнено</span></div>
         <ul id="task-list" aria-label="Задачи"></ul>
         <div id="empty-state" class="empty"><span aria-hidden="true">✓</span><p>Пока здесь чистый лист</p><span>Добавьте первую задачу — начните с малого.</span></div>
+        <div id="done-state" class="empty" hidden><span aria-hidden="true">✓</span><p>Все задачи выполнены</p><span>Переключитесь на «Все», чтобы увидеть выполненные.</span></div>
         </div>
-        <footer><p id="save-status" role="status">Подключение…</p><div class="footer-actions"><button id="refresh" type="button" hidden>Обновить список</button><button id="logout" type="button" hidden>Выйти</button></div></footer>
+        <section id="password-panel" hidden>
+          <form id="password-form" novalidate>
+            <p class="pw-title">Смена пароля владельца</p>
+            <label class="pw-label" for="current-password">Текущий пароль</label>
+            <div class="form-row"><div class="input-wrap"><input id="current-password" type="password" autocomplete="current-password" required></div></div>
+            <label class="pw-label" for="next-password">Новый пароль (12–128 символов)</label>
+            <div class="form-row"><div class="input-wrap"><input id="next-password" type="password" autocomplete="new-password" required></div></div>
+            <label class="pw-label" for="confirm-password">Повторите новый пароль</label>
+            <div class="form-row"><div class="input-wrap"><input id="confirm-password" type="password" autocomplete="new-password" required></div></div>
+            <p id="password-error" class="error" hidden></p>
+            <div class="footer-actions"><button id="password-save" type="submit" class="add">Сохранить пароль</button><button id="password-cancel" type="button">Отмена</button></div>
+          </form>
+        </section>
+        <footer><p id="save-status" role="status">Подключение…</p><div class="footer-actions"><button id="refresh" type="button" hidden>Обновить список</button><button id="change-password" type="button" hidden>Сменить пароль</button><button id="logout" type="button" hidden>Выйти</button></div></footer>
+        <div id="undo-toast" class="toast" hidden><span id="undo-text"></span><button id="undo-button" type="button">Вернуть</button></div>
         <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
       </main>
     </div>
